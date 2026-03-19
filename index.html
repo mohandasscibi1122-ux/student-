@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Activity Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f4f6f9;
+    }
+
+    header {
+      background: #4CAF50;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 10px;
+    }
+
+    .card {
+      background: white;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .completed {
+      text-decoration: line-through;
+      color: gray;
+    }
+
+    button {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 5px;
+      background: #4CAF50;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #45a049;
+    }
+
+    .progress {
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    @media(max-width:600px){
+      .card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Student Activity Tracker</h1>
+  <p>Track your daily learning progress</p>
+</header>
+
+<div class="container">
+
+  <div class="progress" id="progressText"></div>
+
+  <div id="activityList"></div>
+
+</div>
+
+<script>
+  const defaultActivities = [
+    { id: 1, name: "HTML Basics", desc: "Learn basic HTML tags", completed: false },
+    { id: 2, name: "CSS Styling", desc: "Practice CSS layouts", completed: false },
+    { id: 3, name: "JavaScript Intro", desc: "Understand JS basics", completed: false },
+    { id: 4, name: "DOM Manipulation", desc: "Learn DOM operations", completed: false },
+    { id: 5, name: "Mini Project", desc: "Build a small project", completed: false },
+    { id: 6, name: "Revision", desc: "Review all topics", completed: false }
+  ];
+
+  let activities = JSON.parse(localStorage.getItem("activities")) || defaultActivities;
+
+  function saveData() {
+    localStorage.setItem("activities", JSON.stringify(activities));
+  }
+
+  function toggleStatus(id) {
+    activities = activities.map(act => {
+      if (act.id === id) {
+        act.completed = !act.completed;
+      }
+      return act;
+    });
+    saveData();
+    render();
+  }
+
+  function render() {
+    const list = document.getElementById("activityList");
+    const progressText = document.getElementById("progressText");
+
+    list.innerHTML = "";
+
+    let completedCount = activities.filter(a => a.completed).length;
+
+    progressText.innerText = `${completedCount} out of ${activities.length} activities completed`;
+
+    activities.forEach(act => {
+      const div = document.createElement("div");
+      div.className = "card";
+
+      div.innerHTML = `
+        <div>
+          <h3 class="${act.completed ? 'completed' : ''}">${act.name}</h3>
+          <p>${act.desc}</p>
+        </div>
+        <button onclick="toggleStatus(${act.id})">
+          ${act.completed ? "Undo" : "Complete"}
+        </button>
+      `;
+
+      list.appendChild(div);
+    });
+  }
+
+  render();
+</script>
+
+</body>
+</html>
